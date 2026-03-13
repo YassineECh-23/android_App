@@ -8,7 +8,6 @@
     android:background="@color/primary_color"
     tools:context=".MainActivity">
 
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -28,9 +27,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20sp"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="200dp"
-        android:layout_marginRight="20sp"
+        android:layout_marginRight="20dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,11 +41,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/background_btn"
+            app:backgroundTint="@color/white"
             android:fontFamily="monospace"
             android:onClick="main_btn"
             android:padding="8dp"
             android:text="Play"
-            android:textColor="@color/white"
+            android:textColor="#5F43C3"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -56,11 +56,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/background_btn"
+            app:backgroundTint="@color/white"
             android:fontFamily="monospace"
             android:onClick="main_btn"
             android:padding="8dp"
             android:text="Settings"
-            android:textColor="@color/white"
+            android:textColor="#5F43C3"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -70,11 +71,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/background_btn"
+            app:backgroundTint="@color/white"
             android:fontFamily="monospace"
             android:onClick="main_btn"
             android:padding="8dp"
             android:text="EXIT"
-            android:textColor="@color/white"
+            android:textColor="#5F43C3"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
