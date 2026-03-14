@@ -88,8 +88,8 @@ public class ResultActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> Toast.makeText(this, "✅ Résultat sauvegardé !", Toast.LENGTH_SHORT).show(),
-                        throwable -> Toast.makeText(this, "❌ Erreur de sauvegarde", Toast.LENGTH_SHORT).show()
+                        () -> Toast.makeText(this, " Résultat sauvegardé !", Toast.LENGTH_SHORT).show(),
+                        throwable -> Toast.makeText(this, " Erreur de sauvegarde", Toast.LENGTH_SHORT).show()
                 );
     }
 }

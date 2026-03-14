@@ -43,7 +43,6 @@
             android:background="@drawable/background_btn"
             app:backgroundTint="@color/white"
             android:fontFamily="monospace"
-            android:onClick="main_btn"
             android:padding="8dp"
             android:text="Play"
             android:textColor="#5F43C3"
@@ -51,19 +50,18 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/btn_setting"
+            android:id="@+id/btn_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/background_btn"
-            app:backgroundTint="@color/white"
             android:fontFamily="monospace"
-            android:onClick="main_btn"
             android:padding="8dp"
-            android:text="Settings"
+            android:text="History"
             android:textColor="#5F43C3"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:backgroundTint="@color/white" />
 
         <Button
             android:id="@+id/btn_exit"
@@ -73,7 +71,6 @@
             android:background="@drawable/background_btn"
             app:backgroundTint="@color/white"
             android:fontFamily="monospace"
-            android:onClick="main_btn"
             android:padding="8dp"
             android:text="EXIT"
             android:textColor="#5F43C3"

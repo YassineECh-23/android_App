@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -24,7 +25,7 @@ public class playActivity extends AppCompatActivity {
 
     // --- 1. DONNÉES DU QUESTIONNAIRE ---
     String[] question_List = {
-            "Question 1 (Boutons)",
+            " plusieurs types de questions (pour mettre en valeur la variété des composants graphiques) ; (Boutons)",
             "Question 2 (Spinner)",
             "Question 3 (CheckBox)",
             "Question 4 (SeekBar)",
@@ -54,6 +55,7 @@ public class playActivity extends AppCompatActivity {
     Spinner spinner_choices;
     CheckBox cb_1, cb_2, cb_3;
     SeekBar seekbar_choices;
+    ImageView image_back;
 
     int current_quest = 0;
     boolean isclickbtn = false;
@@ -95,9 +97,24 @@ public class playActivity extends AppCompatActivity {
         cb_3 = findViewById(R.id.cb_3);
         seekbar_choices = findViewById(R.id.seekbar_choices);
         seekbar_value_text = findViewById(R.id.seekbar_value_text);
+        image_back = findViewById(R.id.image_back);
 
 
         // --- 4. ÉCOUTEURS D'ÉVÉNEMENTS (Listeners) ---
+
+        // Gestion du bouton retour
+        image_back.setOnClickListener(v -> {
+            if (current_quest > 0) {
+                current_quest--;
+                // On réinitialise l'état pour permettre de valider à nouveau
+                isclickbtn = true; 
+                valueChoose = userAnswers[current_quest];
+                remplirData();
+            } else {
+                // Si on est à la première question, on ferme l'activité
+                finish();
+            }
+        });
 
         // Mettre à jour le texte quand la SeekBar bouge
         seekbar_choices.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -143,14 +160,15 @@ public class playActivity extends AppCompatActivity {
                 // Si ce n'est pas la dernière question
                 if (current_quest < question_List.length - 1) {
                     current_quest++; // On passe à la question suivante
-                    isclickbtn = false;
-                    valueChoose = "";
-
-                    // On nettoie l'interface pour la question suivante
-                    resetButtonsUI();
-                    cb_1.setChecked(false);
-                    cb_2.setChecked(false);
-                    cb_3.setChecked(false);
+                    
+                    // Si on a déjà une réponse pour la question suivante (cas d'un retour en arrière)
+                    if (userAnswers[current_quest] != null) {
+                        isclickbtn = true;
+                        valueChoose = userAnswers[current_quest];
+                    } else {
+                        isclickbtn = false;
+                        valueChoose = "";
+                    }
 
                     remplirData(); // On charge les nouvelles données
                 } else {
@@ -179,6 +197,7 @@ public class playActivity extends AppCompatActivity {
         text_question.setText(question_List[current_quest]);
 
         int currentType = questionTypes[current_quest];
+        String savedAnswer = userAnswers[current_quest];
 
         // On cache tous les conteneurs par défaut
         layout_buttons.setVisibility(View.GONE);
@@ -186,6 +205,9 @@ public class playActivity extends AppCompatActivity {
         layout_checkbox.setVisibility(View.GONE);
         layout_seekbar.setVisibility(View.GONE);
 
+        // Réinitialisation de l'UI des boutons
+        resetButtonsUI();
+        
         // On affiche uniquement le conteneur adapté à la question
         if (currentType == 0) { // Type 0 : Boutons
             layout_buttons.setVisibility(View.VISIBLE);
@@ -193,24 +215,50 @@ public class playActivity extends AppCompatActivity {
             btn_choose2.setText(choose_List[current_quest][1]);
             btn_choose3.setText(choose_List[current_quest][2]);
             btn_choose4.setText(choose_List[current_quest][3]);
+            
+            // Si on a une réponse sauvegardée, on la sélectionne visuellement
+            if (savedAnswer != null) {
+                if (savedAnswer.equals(btn_choose1.getText().toString())) highlightButton(btn_choose1);
+                else if (savedAnswer.equals(btn_choose2.getText().toString())) highlightButton(btn_choose2);
+                else if (savedAnswer.equals(btn_choose3.getText().toString())) highlightButton(btn_choose3);
+                else if (savedAnswer.equals(btn_choose4.getText().toString())) highlightButton(btn_choose4);
+            }
         }
         else if (currentType == 1) { // Type 1 : Spinner
             layout_spinner.setVisibility(View.VISIBLE);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, choose_List[current_quest]);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner_choices.setAdapter(adapter);
+            
+            if (savedAnswer != null) {
+                int spinnerPosition = adapter.getPosition(savedAnswer);
+                spinner_choices.setSelection(spinnerPosition);
+            }
         }
         else if (currentType == 2) { // Type 2 : CheckBox
             layout_checkbox.setVisibility(View.VISIBLE);
             cb_1.setText(choose_List[current_quest][0]);
             cb_2.setText(choose_List[current_quest][1]);
             cb_3.setText(choose_List[current_quest][2]);
+            
+            cb_1.setChecked(false);
+            cb_2.setChecked(false);
+            cb_3.setChecked(false);
+
+            if (savedAnswer != null) {
+                if (savedAnswer.contains(cb_1.getText().toString())) cb_1.setChecked(true);
+                if (savedAnswer.contains(cb_2.getText().toString())) cb_2.setChecked(true);
+                if (savedAnswer.contains(cb_3.getText().toString())) cb_3.setChecked(true);
+            }
         }
         else if (currentType == 3) { // Type 3 : SeekBar
             layout_seekbar.setVisibility(View.VISIBLE);
-            // On remet la seekbar à sa valeur par défaut au milieu (par exemple 3)
-            seekbar_choices.setProgress(3);
-            seekbar_value_text.setText("Valeur: 3");
+            int progress = 3;
+            if (savedAnswer != null) {
+                try { progress = Integer.parseInt(savedAnswer); } catch (Exception e) {}
+            }
+            seekbar_choices.setProgress(progress);
+            seekbar_value_text.setText("Valeur: " + progress);
         }
     }
 
@@ -218,13 +266,15 @@ public class playActivity extends AppCompatActivity {
     public void ClickChoose(View view) {
         resetButtonsUI(); // On remet tous les boutons à la normale
         Button btn_click = (Button) view;
-
-        // Change la couleur du bouton cliqué pour montrer la sélection
-        btn_click.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#805F43C3")));
-        btn_click.setTextColor(Color.WHITE);
+        highlightButton(btn_click);
 
         isclickbtn = true;
         valueChoose = btn_click.getText().toString(); // On capture le texte du bouton
+    }
+    
+    private void highlightButton(Button btn) {
+        btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#805F43C3")));
+        btn.setTextColor(Color.WHITE);
     }
 
     // Remise à zéro de l'apparence des boutons (Fond blanc, texte violet)

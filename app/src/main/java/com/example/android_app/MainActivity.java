@@ -23,17 +23,23 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Set up click listeners programmatically for better reliability
+        findViewById(R.id.btn_play).setOnClickListener(v -> 
+                startActivity(new Intent(MainActivity.this, playActivity.class)));
+
+        findViewById(R.id.btn_history).setOnClickListener(v -> 
+                startActivity(new Intent(MainActivity.this, HistoryActivity.class)));
+
+        findViewById(R.id.btn_exit).setOnClickListener(v -> 
+                finishAffinity());
     }
 
-    public void main_btn(View view){
-        int id = view.getId();
-
-        if (id == R.id.btn_play) {
-            startActivity(new Intent(MainActivity.this, playActivity.class));
-        } else if (id == R.id.btn_setting) {
-        } else if (id == R.id.btn_exit) {
-            // Fermer l'application
-            finishAffinity();
-        }
+    /**
+     * @deprecated Use programmatic listeners in onCreate instead.
+     */
+    public void main_btn(View view) {
+        // This method is kept for backward compatibility if XML still references it,
+        // but programmatic listeners will take precedence.
     }
 }
