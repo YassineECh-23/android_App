@@ -1,12 +1,19 @@
 package com.example.android_app;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -61,7 +68,11 @@ public class HistoryActivity extends AppCompatActivity {
                             } else {
                                 text_empty.setVisibility(View.GONE);
                                 recyclerView.setVisibility(View.VISIBLE);
-                                recyclerView.setAdapter(new HistoryAdapter(results));
+
+                                // On passe à l'adapter une méthode (Listener) qui sera appelée quand on clique sur l'enveloppe
+                                recyclerView.setAdapter(new HistoryAdapter(results, (result, sessionNumber) -> {
+                                    showEmailPopup(result, sessionNumber);
+                                }));
                             }
                         },
                         throwable -> {
@@ -71,10 +82,100 @@ public class HistoryActivity extends AppCompatActivity {
                 );
     }
 
+    // --- LOGIQUE DE LA POPUP ET DE L'E-MAIL ---
+
+    private void showEmailPopup(QuizResult result, int sessionNumber) {
+        // 1. On prépare la popup
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_send_email, null);
+        builder.setView(dialogView);
+
+        EditText editPrenom = dialogView.findViewById(R.id.edit_prenom);
+        EditText editNom = dialogView.findViewById(R.id.edit_nom);
+        EditText editEmailMedecin = dialogView.findViewById(R.id.edit_email_medecin);
+
+        // 2. On récupère les infos sauvegardées (SharedPreferences) pour pré-remplir les champs
+        SharedPreferences prefs = getSharedPreferences("MindTrackPrefs", MODE_PRIVATE);
+        editPrenom.setText(prefs.getString("prenom_user", ""));
+        editNom.setText(prefs.getString("nom_user", ""));
+        editEmailMedecin.setText(prefs.getString("email_medecin", ""));
+
+        // 3. Configuration du bouton "Envoyer"
+        builder.setPositiveButton("Envoyer", (dialog, which) -> {
+            String prenom = editPrenom.getText().toString().trim();
+            String nom = editNom.getText().toString().trim();
+            String email = editEmailMedecin.getText().toString().trim();
+
+            if (email.isEmpty()) {
+                Toast.makeText(this, "L'e-mail du médecin est obligatoire", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // On sauvegarde ces infos pour la prochaine fois
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("prenom_user", prenom);
+            editor.putString("nom_user", nom);
+            editor.putString("email_medecin", email);
+            editor.apply();
+
+            // On lance l'application d'e-mail
+            sendEmailViaIntent(prenom, nom, email, result, sessionNumber);
+        });
+
+        // Bouton "Annuler"
+        builder.setNegativeButton("Annuler", (dialog, which) -> dialog.dismiss());
+
+        builder.create().show();
+    }
+
+    private void sendEmailViaIntent(String prenom, String nom, String email, QuizResult result, int sessionNumber) {
+        // L'objet de l'e-mail
+        String subject = "Résultats MindTrack - Session #" + sessionNumber + " - " + prenom + " " + nom;
+
+        // Construction du corps du message
+        StringBuilder body = new StringBuilder();
+        body.append("Bonjour,\n\n");
+        body.append("Voici les résultats du questionnaire de santé passé le ").append(result.date).append(".\n\n");
+
+        String[] answers = result.answersToArray();
+        for (int i = 0; i < answers.length; i++) {
+            body.append("Question ").append(i + 1).append(" : ").append(answers[i]).append("\n");
+        }
+
+        body.append("\nCordialement,\n").append(prenom).append(" ").append(nom);
+
+        // Lancement de l'Intent (Ouvre Gmail, Outlook, etc.)
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // "mailto:" indique qu'on veut uniquement les applis d'e-mail
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body.toString());
+
+        // NOUVELLE MÉTHODE (Android 11+) : On essaie de lancer l'Intent directement
+        try {
+            startActivity(intent);
+        } catch (android.content.ActivityNotFoundException ex) {
+            // Si aucune application d'e-mail n'est installée, on attrape l'erreur ici pour ne pas faire crasher l'appli
+            Toast.makeText(this, "Aucune application d'e-mail configurée sur ce téléphone.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    // --- ADAPTER DU RECYCLER VIEW ---
+
     static class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
         private final List<QuizResult> results;
+        private final OnEmailClickListener emailClickListener;
 
-        HistoryAdapter(List<QuizResult> results) { this.results = results; }
+        // Interface pour écouter le clic sur l'enveloppe
+        public interface OnEmailClickListener {
+            void onEmailClick(QuizResult result, int sessionNumber);
+        }
+
+        HistoryAdapter(List<QuizResult> results, OnEmailClickListener listener) {
+            this.results = results;
+            this.emailClickListener = listener;
+        }
 
         @Override
         public HistoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -85,7 +186,15 @@ public class HistoryActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(HistoryViewHolder holder, int position) {
-            holder.bind(results.get(position), position + 1);
+            QuizResult currentResult = results.get(position);
+            int sessionNum = position + 1;
+
+            holder.bind(currentResult, sessionNum);
+
+            // On connecte le clic sur le bouton au Listener
+            holder.btn_send_email.setOnClickListener(v -> {
+                emailClickListener.onEmailClick(currentResult, sessionNum);
+            });
         }
 
         @Override
@@ -93,12 +202,14 @@ public class HistoryActivity extends AppCompatActivity {
 
         static class HistoryViewHolder extends RecyclerView.ViewHolder {
             TextView text_session_number, text_date, text_answers;
+            ImageButton btn_send_email;
 
             HistoryViewHolder(View itemView) {
                 super(itemView);
                 text_session_number = itemView.findViewById(R.id.text_session_number);
                 text_date = itemView.findViewById(R.id.text_date);
                 text_answers = itemView.findViewById(R.id.text_answers);
+                btn_send_email = itemView.findViewById(R.id.btn_send_email); // On récupère notre nouveau bouton
             }
 
             void bind(QuizResult result, int num) {
