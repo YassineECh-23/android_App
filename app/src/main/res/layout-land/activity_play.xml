@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".playActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_top"
+        app:layout_constraintWidth_percent="0.4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/cpt_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="1/N"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/image_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_back" />
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cpt_question">
+
+            <TextView
+                android:id="@+id/text_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Questions"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/btn_next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/constraintLayout"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="top"
+            android:paddingTop="32dp"
+            android:paddingBottom="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <LinearLayout
+                android:id="@+id/layout_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <Button android:id="@+id/btn_choose1" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/background_btn_choose" app:backgroundTint="@color/white" android:onClick="ClickChoose" android:text="choose 1" android:textColor="#5F43C3" android:textSize="14sp" />
+                <Button android:id="@+id/btn_choose2" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/background_btn_choose" app:backgroundTint="@color/white" android:onClick="ClickChoose" android:text="choose 2" android:textColor="#5F43C3" android:textSize="14sp" />
+                <Button android:id="@+id/btn_choose3" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/background_btn_choose" app:backgroundTint="@color/white" android:onClick="ClickChoose" android:text="choose 3" android:textColor="#5F43C3" android:textSize="14sp" />
+                <Button android:id="@+id/btn_choose4" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/background_btn_choose" app:backgroundTint="@color/white" android:onClick="ClickChoose" android:text="choose 4" android:textColor="#5F43C3" android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <Spinner android:id="@+id/spinner_choices" android:layout_width="match_parent" android:layout_height="50dp" android:background="@android:drawable/btn_dropdown" android:spinnerMode="dropdown" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_checkbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <CheckBox android:id="@+id/cb_1" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Check 1" android:textSize="16sp"/>
+                <CheckBox android:id="@+id/cb_2" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Check 2" android:textSize="16sp"/>
+                <CheckBox android:id="@+id/cb_3" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Check 3" android:textSize="16sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView android:id="@+id/seekbar_value_text" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Valeur: 3" android:textAlignment="center" android:textSize="18sp" android:textStyle="bold" android:layout_marginBottom="16dp"/>
+                <SeekBar android:id="@+id/seekbar_choices" style="@style/Widget.AppCompat.SeekBar.Discrete" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="5" android:progress="3" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_next"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:fontFamily="monospace"
+        android:text="Next"
+        android:textColor="@color/white"
+        android:textColorLink="#5F43C3"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/constraintLayout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
