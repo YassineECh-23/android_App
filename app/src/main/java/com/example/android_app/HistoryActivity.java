@@ -2,7 +2,6 @@ package com.example.android_app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +45,9 @@ public class HistoryActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        ImageButton btn_back = findViewById(R.id.btn_back);
+        btn_back.setOnClickListener(v -> finish());
 
         recyclerView = findViewById(R.id.recycler_history);
         text_empty = findViewById(R.id.text_empty);
@@ -145,17 +147,15 @@ public class HistoryActivity extends AppCompatActivity {
         body.append("\nCordialement,\n").append(prenom).append(" ").append(nom);
 
         // Lancement de l'Intent (Ouvre Gmail, Outlook, etc.)
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:")); // "mailto:" indique qu'on veut uniquement les applis d'e-mail
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("message/rfc822");
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, body.toString());
 
-        // NOUVELLE MÉTHODE (Android 11+) : On essaie de lancer l'Intent directement
         try {
-            startActivity(intent);
+            startActivity(Intent.createChooser(intent, "Envoyer via..."));
         } catch (android.content.ActivityNotFoundException ex) {
-            // Si aucune application d'e-mail n'est installée, on attrape l'erreur ici pour ne pas faire crasher l'appli
             Toast.makeText(this, "Aucune application d'e-mail configurée sur ce téléphone.", Toast.LENGTH_LONG).show();
         }
     }
