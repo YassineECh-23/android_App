@@ -57,7 +57,7 @@ public class ResultActivity extends AppCompatActivity {
             StringBuilder resultText = new StringBuilder();
 
             // On affiche le diagnostic en premier, bien en évidence
-            resultText.append("📊 RÉSULTAT DU BILAN :\n");
+            resultText.append(" BILAN DU TEST :\n");
             resultText.append(diagnostic).append("\n\n");
             resultText.append("-----------------------------------\n\n");
             resultText.append("Détail de vos réponses :\n\n");

@@ -47,12 +47,12 @@ public class playActivity extends AppCompatActivity {
             {"Très serein(e)", "Légèrement stressé(e)", "Très stressé(e)", "Au bord de l'épuisement"}, // Q2 (Boutons)
             {"", "", "", ""}, // Q3 (SeekBar, pas besoin de texte)
             {"Moins d'1 heure", "1 à 2 heures", "2 à 4 heures", "Plus de 4 heures"}, // Q4 (Spinner)
-            {"Fatigue intense", "Troubles de concentration", "Maux de tête/Ventre", ""}, // Q5 (CheckBox - 3 choix max dans notre UI)
+            {"Fatigue intense", "Troubles de concentration", "Maux de tête/Ventre", "NON/Autre"}, // Q5 (CheckBox - 3 choix max dans notre UI)
             {"Toujours", "Souvent", "Rarement", "Jamais"}, // Q6 (Radio)
             {"Jamais", "Parfois", "Souvent", "Constamment"}, // Q7 (Boutons)
             {"", "", "", ""}, // Q8 (SeekBar)
             {"Jamais", "1 fois par mois", "1 à 2 fois par semaine", "Presque tous les jours"}, // Q9 (Spinner)
-            {"Sport ou Sorties", "Écrans (Réseaux, Jeux)", "Isolement (Rester seul(e))", ""} // Q10 (CheckBox)
+            {"Sport ou Sorties", "Écrans (Réseaux, Jeux)", "Isolement (Rester seul(e))", "Autre"} // Q10 (CheckBox)
     };
 
     String[] userAnswers = new String[10]; // Tableau de 10 réponses
@@ -62,7 +62,7 @@ public class playActivity extends AppCompatActivity {
     Button btn_choose1, btn_choose2, btn_choose3, btn_choose4, btn_next;
     LinearLayout layout_buttons, layout_spinner, layout_checkbox, layout_seekbar, layout_radio;
     Spinner spinner_choices;
-    CheckBox cb_1, cb_2, cb_3;
+    CheckBox cb_1, cb_2, cb_3, cb_4;
     SeekBar seekbar_choices;
     RadioGroup rg_choices;
     RadioButton rb_1, rb_2, rb_3, rb_4;
@@ -104,6 +104,7 @@ public class playActivity extends AppCompatActivity {
         cb_1 = findViewById(R.id.cb_1);
         cb_2 = findViewById(R.id.cb_2);
         cb_3 = findViewById(R.id.cb_3);
+        cb_4 = findViewById(R.id.cb_4);
         seekbar_choices = findViewById(R.id.seekbar_choices);
         seekbar_value_text = findViewById(R.id.seekbar_value_text);
 
@@ -149,6 +150,7 @@ public class playActivity extends AppCompatActivity {
                 if (cb_1.isChecked()) valueChoose += cb_1.getText() + " / ";
                 if (cb_2.isChecked()) valueChoose += cb_2.getText() + " / ";
                 if (cb_3.isChecked()) valueChoose += cb_3.getText() + " / ";
+                if (cb_4.isChecked()) valueChoose += cb_4.getText() + " / ";
 
                 if (valueChoose.endsWith(" / ")) valueChoose = valueChoose.substring(0, valueChoose.length() - 3);
                 isclickbtn = !valueChoose.trim().isEmpty();
@@ -238,13 +240,20 @@ public class playActivity extends AppCompatActivity {
             cb_1.setText(choose_List[current_quest][0]);
             cb_2.setText(choose_List[current_quest][1]);
             cb_3.setText(choose_List[current_quest][2]);
+            cb_4.setText(choose_List[current_quest][3]);
 
-            cb_1.setChecked(false); cb_2.setChecked(false); cb_3.setChecked(false);
+
+            cb_1.setChecked(false);
+            cb_2.setChecked(false);
+            cb_3.setChecked(false);
+            cb_4.setChecked(false);
+
 
             if (savedAnswer != null) {
                 if (savedAnswer.contains(cb_1.getText().toString())) cb_1.setChecked(true);
                 if (savedAnswer.contains(cb_2.getText().toString())) cb_2.setChecked(true);
                 if (savedAnswer.contains(cb_3.getText().toString())) cb_3.setChecked(true);
+                if (savedAnswer.contains(cb_4.getText().toString())) cb_4.setChecked(true);
             }
         } else if (currentType == 3) {
             layout_seekbar.setVisibility(View.VISIBLE);
