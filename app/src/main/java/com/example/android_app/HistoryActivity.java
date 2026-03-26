@@ -216,10 +216,24 @@ public class HistoryActivity extends AppCompatActivity {
             void bind(QuizResult result, int num) {
                 text_session_number.setText("Session #" + num);
                 text_date.setText(result.date);
+
+                // Affichage du bilan EN PREMIER
+                if (result.diagnostic != null && !result.diagnostic.isEmpty()) {
+                    text_answers.setText(result.diagnostic + "\n\n──────────────────\n\n");
+                }
+
+                // Puis le détail des réponses
                 String[] answers = result.answersToArray();
                 StringBuilder sb = new StringBuilder();
+
+                // Ajoute le bilan au début si présent
+                if (result.diagnostic != null && !result.diagnostic.isEmpty()) {
+                    sb.append(result.diagnostic).append("\n\n──────────────\n\n");
+                }
+
                 for (int i = 0; i < answers.length; i++)
                     sb.append("Q").append(i + 1).append(" : ").append(answers[i]).append("\n");
+
                 text_answers.setText(sb.toString().trim());
             }
         }

@@ -74,7 +74,7 @@ public class ResultActivity extends AppCompatActivity {
 
             // 4. Sauvegarde dans la base de données
             // (On sauvegarde les réponses telles quelles pour l'historique)
-            saveResultToDatabase(receivedAnswers);
+            saveResultToDatabase(receivedAnswers, scoreStress, diagnostic);
 
         } else {
             text_final_results.setText("Erreur : Données incomplètes.");
@@ -162,13 +162,15 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     // --- SAUVEGARDE BDD ---
-    private void saveResultToDatabase(String[] answers) {
+    private void saveResultToDatabase(String[] answers, int score, String diagnostic) {
         String date = new SimpleDateFormat("dd/MM/yyyy à HH:mm", Locale.getDefault()).format(new Date());
 
         QuizResult result = new QuizResult(
                 date,
                 QuizResult.answersToString(answers),
-                answers.length
+                answers.length,
+                score,
+                diagnostic
         );
 
         AppDatabase db = AppDatabase.getInstance(this);

@@ -19,10 +19,18 @@ public class QuizResult {
     @ColumnInfo(name = "total_questions")
     public int totalQuestions;
 
-    public QuizResult(String date, String answers, int totalQuestions) {
+    @ColumnInfo(name = "score")
+    public int score;
+
+    @ColumnInfo(name = "diagnostic")
+    public String diagnostic;
+
+    public QuizResult(String date, String answers, int totalQuestions, int score, String diagnostic) {
         this.date = date;
         this.answers = answers;
         this.totalQuestions = totalQuestions;
+        this.score = score;
+        this.diagnostic = diagnostic;
     }
 
     public static String answersToString(String[] answers) {
