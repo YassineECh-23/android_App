@@ -17,7 +17,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.util.Log;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -62,7 +62,6 @@ public class playActivity extends AppCompatActivity {
     LinearLayout layout_buttons, layout_spinner, layout_checkbox, layout_seekbar, layout_radio;
     Spinner spinner_choices;
     CheckBox cb_1, cb_2, cb_3, cb_4, cb_5;
-    View divider_cb;
     SeekBar seekbar_choices;
     RadioGroup rg_choices;
     RadioButton rb_1, rb_2, rb_3, rb_4;
@@ -103,7 +102,6 @@ public class playActivity extends AppCompatActivity {
         cb_3               = findViewById(R.id.cb_3);
         cb_4               = findViewById(R.id.cb_4);
         cb_5               = findViewById(R.id.cb_5);
-        divider_cb         = findViewById(R.id.divider_cb);
         seekbar_choices    = findViewById(R.id.seekbar_choices);
         seekbar_value_text = findViewById(R.id.seekbar_value_text);
         rg_choices         = findViewById(R.id.rg_choices);
@@ -203,7 +201,36 @@ public class playActivity extends AppCompatActivity {
 
         remplirData();
     }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState); // TOUJOURS en premier
+        outState.putInt("current_quest", current_quest);
+        outState.putStringArray("userAnswers", userAnswers);
+        outState.putBoolean("isclickbtn", isclickbtn);
+        outState.putString("valueChoose", valueChoose);
+        Log.d("MindTrack", "playActivity - onSaveInstanceState : question " + current_quest);
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState); // TOUJOURS en premier
 
+        if (savedInstanceState.containsKey("current_quest")) {
+            current_quest = savedInstanceState.getInt("current_quest");
+        }
+        if (savedInstanceState.containsKey("userAnswers")) {
+            String[] saved = savedInstanceState.getStringArray("userAnswers");
+            if (saved != null) userAnswers = saved;
+        }
+        if (savedInstanceState.containsKey("isclickbtn")) {
+            isclickbtn = savedInstanceState.getBoolean("isclickbtn");
+        }
+        if (savedInstanceState.containsKey("valueChoose")) {
+            valueChoose = savedInstanceState.getString("valueChoose");
+        }
+
+        remplirData(); // Recharge la question là où l'utilisateur en était
+        Log.d("MindTrack", "playActivity - onRestoreInstanceState : question " + current_quest);
+    }
     private void setupQ5Listeners() {
         // NON coché → désactive et décoche tous les symptômes
         cb_5.setOnCheckedChangeListener((btn, isChecked) -> {
@@ -286,11 +313,9 @@ public class playActivity extends AppCompatActivity {
             cb_3.setText(choose_List[current_quest][2]);
             cb_4.setText(choose_List[current_quest][3]);
 
-            // Afficher cb_5 et le séparateur seulement pour Q5
+            // Afficher cb_5
             boolean isQ5 = (current_quest == 4);
             cb_5.setVisibility(isQ5 ? View.VISIBLE : View.GONE);
-            divider_cb.setVisibility(isQ5 ? View.VISIBLE : View.GONE);
-
             // Reset complet sans déclencher les listeners
             isUpdatingCheckboxes = true;
             cb_1.setChecked(false); cb_1.setEnabled(true);
@@ -302,7 +327,7 @@ public class playActivity extends AppCompatActivity {
 
             // Restaurer la réponse sauvegardée
             if (savedAnswer != null) {
-                if (isQ5 && savedAnswer.equals("NON")) {
+                if (isQ5 && savedAnswer.equals("aucun symptôme")) {
                     isUpdatingCheckboxes = true;
                     cb_5.setChecked(true);
                     cb_1.setEnabled(false); cb_2.setEnabled(false);

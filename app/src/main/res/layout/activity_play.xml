@@ -182,15 +182,6 @@
             android:textSize="16sp"/>
 
         <!-- Séparateur + cb_5 "NON" — visible uniquement pour Q5 via le Java -->
-        <View
-            android:id="@+id/divider_cb"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="4dp"
-            android:background="#CCCCCC"
-            android:visibility="gone"/>
-
         <CheckBox
             android:id="@+id/cb_5"
             android:layout_width="match_parent"
