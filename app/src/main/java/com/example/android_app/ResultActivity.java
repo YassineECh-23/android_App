@@ -98,54 +98,61 @@ public class ResultActivity extends AppCompatActivity {
     private int calculerScoreStress(String[] answers) {
         int score = 0;
         try {
-            // Q2 (Stress global)
-            if ("Légèrement stressé(e)".equals(answers[1])) score += 1;
-            else if ("Très stressé(e)".equals(answers[1])) score += 3;
-            else if ("Au bord de l'épuisement".equals(answers[1])) score += 5;
+            // Q1 — Année d'études (Master = plus de pression)
+            if ("Master 1 / 2".equals(answers[0]))  score += 1;
 
-            // Q3 (Sommeil SeekBar 0-5) : Moins on dort bien, plus le stress augmente
+            // Q2 — Stress global
+            if      ("Légèrement stressé(e)".equals(answers[1]))       score += 1;
+            else if ("Très stressé(e)".equals(answers[1]))              score += 3;
+            else if ("Au bord de l'épuisement".equals(answers[1]))      score += 5;
+
+            // Q3 — Sommeil (SeekBar 0-5) : moins bon = plus de score
             if (answers[2] != null && !answers[2].isEmpty()) {
                 int sommeil = Integer.parseInt(answers[2]);
-                score += (5 - sommeil); // Si sommeil = 0, ajoute 5 pts. Si 5, ajoute 0 pt.
+                score += (5 - sommeil);
             }
 
-            // Q4 (Heures de travail hors cours)
-            if ("2 à 4 heures".equals(answers[3])) score += 1;
-            else if ("Plus de 4 heures".equals(answers[3])) score += 2;
+            // Q4 — Heures de travail hors cours
+            if      ("2 à 4 heures".equals(answers[3]))      score += 1;
+            else if ("Plus de 4 heures".equals(answers[3]))  score += 2;
 
-            // Q5 (Symptômes physiques CheckBox)
-            if (answers[4] != null) {
-                if (answers[4].contains("Fatigue intense")) score += 2;
+            // Q5 — Symptômes physiques (NON = 0 pt)
+            if (answers[4] != null && !answers[4].equals("NON")) {
+                if (answers[4].contains("Fatigue intense"))           score += 2;
                 if (answers[4].contains("Troubles de concentration")) score += 1;
-                if (answers[4].contains("Maux")) score += 2;
+                if (answers[4].contains("Maux"))                      score += 2;
+                if (answers[4].contains("Autre"))                     score += 1;
             }
 
-            // Q6 (Soutien entourage)
-            if ("Rarement".equals(answers[5])) score += 2;
-            else if ("Jamais".equals(answers[5])) score += 3;
+            // Q6 — Soutien de l'entourage
+            if ("Souvent".equals(answers[5]))  score += 1;
+            else if ("Rarement".equals(answers[5])) score += 2;
+            else if ("Jamais".equals(answers[5]))   score += 3;
 
-            // Q7 (Dépassé par la charge)
-            if ("Parfois".equals(answers[6])) score += 1;
-            else if ("Souvent".equals(answers[6])) score += 2;
+            // Q7 — Dépassé par la charge
+            if      ("Parfois".equals(answers[6]))     score += 1;
+            else if ("Souvent".equals(answers[6]))     score += 2;
             else if ("Constamment".equals(answers[6])) score += 4;
 
-            // Q8 (Motivation SeekBar 0-5) : Moins on est motivé, plus on est en risque
+            // Q8 — Motivation (SeekBar 0-5) : moins motivé = plus de score
             if (answers[7] != null && !answers[7].isEmpty()) {
                 int motivation = Integer.parseInt(answers[7]);
                 score += (5 - motivation);
             }
 
-            // Q9 (Détente)
-            if ("1 fois par mois".equals(answers[8])) score += 1;
-            else if ("Jamais".equals(answers[8])) score += 3;
+            // Q9 — Fréquence de détente
+            if ("1 fois par mois".equals(answers[8]))    score += 1;
+            else if ("Jamais".equals(answers[8]))           score += 3;
 
-            // Q10 (Refuge CheckBox)
+            // Q10 — Refuge en cas de stress
             if (answers[9] != null) {
-                if (answers[9].contains("Écrans")) score += 1;
-                if (answers[9].contains("Isolement")) score += 3; // L'isolement est un signe d'alerte fort
+                if (answers[9].contains("Écrans"))                    score += 1;
+                if (answers[9].contains("Isolement"))                 score += 3;
+                if (answers[9].contains("Autre"))                     score += 1;
             }
+
         } catch (Exception e) {
-            e.printStackTrace(); // En cas de problème de conversion, on évite le crash
+            e.printStackTrace();
         }
         return score;
     }
