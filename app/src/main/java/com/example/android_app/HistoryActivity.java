@@ -100,7 +100,7 @@ public class HistoryActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("MindTrackPrefs", MODE_PRIVATE);
         editPrenom.setText(prefs.getString("prenom_user", ""));
         editNom.setText(prefs.getString("nom_user", ""));
-        editEmailMedecin.setText(prefs.getString("email_medecin", ""));
+        editEmailMedecin.setText(prefs.getString("email", ""));
 
         // 3. Configuration du bouton "Envoyer"
         builder.setPositiveButton("Envoyer", (dialog, which) -> {
@@ -138,6 +138,7 @@ public class HistoryActivity extends AppCompatActivity {
         StringBuilder body = new StringBuilder();
         body.append("Bonjour,\n\n");
         body.append("Voici les résultats du questionnaire de santé passé le ").append(result.date).append(".\n\n");
+
 
         String[] answers = result.answersToArray();
         for (int i = 0; i < answers.length; i++) {
